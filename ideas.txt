@@ -1,0 +1,4 @@
+1. Have a text file of preferences that could take the order of choices that you want while buying a poster
+Gold
+Silver
+Bronze
