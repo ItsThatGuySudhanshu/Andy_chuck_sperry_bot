@@ -69,26 +69,48 @@ let findMatch = async (entryDiv, preference) => {
 
 
   let listOfParagraphs = await entryDiv.$$("p");
+  //console.log(listOfParagraphs);
 
-  for (let paragraph in listOfParagraphs) {
+  for (let i = 0; i < listOfParagraphs.length; i++) {
+    let paragraph = listOfParagraphs[i];
+
     let textUnparsed = await paragraph.getProperty("innerText")
     let text = await textUnparsed.jsonValue();
 
-    if (text.toLowerCase().includes(preference.toLowerCase)) {
+    console.log(text)
+    if (text.toLowerCase().includes(preference.toLowerCase())) {
+      console.log(index.toString() + ": in the loop")
       return index;
     }
 
     index++
   }
+  console.log("outside loop")
+  return -1;
 
+}
+
+let choosePreference = (filename = null, entryDiv, preference = "Regular") => {
+
+
+  if (filename != null) {
+    console.log("here")
+  } else {
+
+    index = findMatch(entryDiv, preference);
+    console.log("index: " + index.toString())
+    return index;
+
+  }
 }
 
 async function puppetteerCall(page) {
 
   console.log("after puppeteer opened a new page")
   // TODO: FIX THIS URL
-  let contentHtml = await fs.readFileSync('C:/Users/sudha/Desktop/Python-Files/Dr._Schmidt_bot/chuck-sperry-source-code.html', 'utf8');
+  let contentHtml = await fs.readFileSync(`${__dirname}/chuck-sperry-source-code.html`, 'utf8');
   await page.setContent(contentHtml)
+
   //await page.goto(`https://chucksperry.net/blog/`);
   // try {
   //   await page.waitForNavigation();
@@ -105,21 +127,30 @@ async function puppetteerCall(page) {
 
   try {
 
+    let indexOfDescription = await choosePreference(null, entryDiv, "Regular");
 
-    let posterDescription = await entryDiv.$("p:nth-of-type(2)");
+    if (indexOfDescription == -1) {
+      return false;
+    }
+    //console.log(indexOfDescription);
 
-    let availability = await entryDiv.$("p:nth-of-type(3)");
+    // let posterDescription = await entryDiv.$("p:nth-of-type(2)");
+
+    // let availability = await entryDiv.$("p:nth-of-type(3)");
+
+    let posterDescriptionHandle = await entryDiv.$(`p:nth-of-type(${indexOfDescription})`);
+
+    let availabilityHandle = await entryDiv.$(`p:nth-of-type(${indexOfDescription + 1})`);
 
     //console.log("here");
 
-    let text = await posterDescription.getProperty("innerText")
-    let textjson = await text.jsonValue();
+    let posterDescriptionTextUnparsed = await posterDescriptionHandle.getProperty("innerText")
+    let posterDescriptionText = await posterDescriptionTextUnparsed.jsonValue();
 
-    // console.log(typeof textjson);
-    // console.log(textjson);
+    console.log("in main: " + posterDescriptionText)
 
-    let nextSibling = await availability.getProperty("innerText");
-    let nextSiblingText = await nextSibling.jsonValue();
+    let availabilityUnparsed = await availabilityHandle.getProperty("innerText");
+    let availabilityText = await availabilityUnparsed.jsonValue();
 
     // console.log(nextSiblingText);
 
@@ -127,8 +158,8 @@ async function puppetteerCall(page) {
 
 
     const forms = await entryDiv.$$("form");
-    if (nextSiblingText.includes("________________") ||
-    (!nextSiblingText.toLowerCase().includes("Not Available".toLowerCase()) && !nextSiblingText.toLowerCase().includes("Sold out".toLowerCase()))) {
+    if (availabilityText.includes("________________") ||
+    (!availabilityText.toLowerCase().includes("Not Available".toLowerCase()) && !availabilityText.toLowerCase().includes("Sold out".toLowerCase()))) {
       let form = await forms[0];
 
       // Form is inside a p element
@@ -197,9 +228,8 @@ async function puppetteerCall(page) {
 
       await page.$eval("#payment-submit-btn", btn => btn.click());
 
-
-      //await resolveAfterSeconds(3000);
-      //await page.screenshot({ path: "screenshots/mock-website/beforePaymentSubmit_" + makeid(8) + ".png"})
+      await resolveAfterSeconds(3000);
+      //await page.screenshot({ path: "screenshots/mock-website/afterSubmitPayment_" + makeid(8) + ".png"})
 
       return true;
 
@@ -208,9 +238,6 @@ async function puppetteerCall(page) {
       console.log("not found")
       return false;
     }
-
-
-
 
   } catch (e) {
     console.log(e);
@@ -228,7 +255,7 @@ let main = async () => {
 
   await page.setRequestInterception(true);
   page.on('request', (req) => {
-    if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image'){
+    if( req.resourceType() == 'font' || req.resourceType() == 'stylesheet' || req.resourceType() == 'image'){
 
       req.abort();
     }

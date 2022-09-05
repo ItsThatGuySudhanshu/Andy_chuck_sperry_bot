@@ -1,0 +1,14 @@
+6RT09659C4257210R: latest transaction id
+
+
+Tests run:
+1) Run test website with buy form intact: gets paid and transaction is created (200)
+2) Run test website without buy form: continues the loop and doesn't create transaction (200)
+3) Run real website without buy form: continues the loop and doesn't create transaction, accurately
+    sees the fact that there are no posters in the content header to buy (200)
+4) Run test website with buy form in a p element (<p><form>): runs and creates the transaction (200)
+
+Future tests to be run:
+1) Test with real posters
+2) How can it run perpetually and not crash
+3) mechanisms to catch a crash and see if it continues running
