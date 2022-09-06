@@ -108,10 +108,10 @@ async function puppetteerCall(page) {
 
   console.log("after puppeteer opened a new page")
   // TODO: FIX THIS URL
-  let contentHtml = await fs.readFileSync(`${__dirname}/chuck-sperry-source-code.html`, 'utf8');
-  await page.setContent(contentHtml)
+  // let contentHtml = await fs.readFileSync(`${__dirname}/chuck-sperry-source-code.html`, 'utf8');
+  // await page.setContent(contentHtml)
 
-  //await page.goto(`https://chucksperry.net/blog/`);
+  await page.goto(`https://chucksperry.net/blog/`);
   // try {
   //   await page.waitForNavigation();
   // } catch (e) {
