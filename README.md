@@ -1,4 +1,10 @@
-### Instructions on running the application
+## Instructions on running the application (Docker)
+
+1. Clone the github repository
+2. Create a .env file with the given credentials for username and password
+3. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST=$(date +%s) .`
+
+## Instructions on running the application (Windows)
 
 1. Download the zip folder by clicking on Code -> Download Zip on the github page. Choose the desktop as the download destination and extract it (should be able to right click on the zip file in the desktop and hit extract)
 2. Download this software based on your OS: https://nodejs.org/en/download/

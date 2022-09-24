@@ -140,6 +140,7 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
         }
       }
       else {
+        console.log("in the ignore rule")
         console.log("not found")
         return false;
       }

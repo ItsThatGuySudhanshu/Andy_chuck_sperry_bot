@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install gnupg wget -y && \
 
 WORKDIR /app
 
+ARG CACHEBUST=1
+
 RUN git clone https://github.com/ItsThatGuySudhanshu/Andy_chuck_sperry_bot.git
 
 WORKDIR /app/Andy_chuck_sperry_bot
