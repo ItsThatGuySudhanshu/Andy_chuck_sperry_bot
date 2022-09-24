@@ -90,21 +90,21 @@ let findMatch = async (entryDiv, preference) => {
 
 }
 
-let choosePreference = (filename = null, entryDiv, preference = "Regular") => {
+let choosePreference = async (filename = null, entryDiv, preference = "Regular") => {
 
 
   if (filename != null) {
     console.log("here")
   } else {
 
-    index = findMatch(entryDiv, preference);
+    index = await findMatch(entryDiv, preference);
     console.log("index: " + index.toString())
     return index;
 
   }
 }
 
-async function puppetteerCall(page) {
+async function puppetteerCall(page, ignoreIfRegularExists = true) {
 
   console.log("after puppeteer opened a new page")
   // TODO: FIX THIS URL
@@ -126,6 +126,19 @@ async function puppetteerCall(page) {
 
 
   try {
+
+    const forms = await entryDiv.$$("form");
+
+    // Added this flag for testing just cards
+    if (ignoreIfRegularExists == true) {
+      if (forms.length > 0) {
+        return await enterPaypalDetails(forms, entryDiv, page);
+      }
+      else {
+        console.log("not found")
+        return false;
+      }
+    }
 
     let indexOfDescription = await choosePreference(null, entryDiv, "Regular");
 
@@ -157,87 +170,21 @@ async function puppetteerCall(page) {
     // console.log(typeof nextSiblingText);
 
 
-    const forms = await entryDiv.$$("form");
+
+
     if (availabilityText.includes("________________") ||
     (!availabilityText.toLowerCase().includes("Not Available".toLowerCase()) && !availabilityText.toLowerCase().includes("Sold out".toLowerCase()))) {
-      let form = await forms[0];
-
-      // Form is inside a p element
-      if (form == null) {
-        form = await entryDiv.$("p:nth-of-type(3)");
-        form = await form.$("form");
-      }
-      await form.evaluate(form => form.submit());
-
-
-      try {
-        await page.waitForNavigation();
-
-      } catch (e) {
-        console.log(e);
-
-      }
-
-      let val = process.env.PERSONAL_USERNAME;
-      //console.log(val);
-      const addEmail = await page.$eval("#email", (element, val) => {
-        element.value = val;
-        return element.value;
-      }, val
-
-      );
-
-
-      //console.log(addEmail);
-
-      let paypalUsernameForm = await page.$("form");
-      await paypalUsernameForm.evaluate(form => form.submit());
-
-      try {
-        await page.waitForNavigation();
-
-      } catch (e) {
-        console.log(e);
-
-      }
-      const password = process.env.PERSONAL_PASSWORD;
-      await page.$eval("#password", (element, password) => {
-        element.value = password;
-        return element.value;
-      }, password);
-
-      //console.log(password);
-
-      let formAfterSubmit = await page.$("form");
-      await formAfterSubmit.evaluate(form => form.submit());
-
-
-      try {
-        await page.waitForNavigation();
-
-      } catch (e) {
-        console.log(e);
-
-      }
-
-      //await page.screenshot({ path: "screenshots/mock-website/afterPasword_" + makeid(8) + ".png"})
-
-      await page.$eval("input[type=radio]", el => el.click());
-
-      await resolveAfterSeconds(2000);
-
-      await page.$eval("#payment-submit-btn", btn => btn.click());
-
-      await resolveAfterSeconds(3000);
-      //await page.screenshot({ path: "screenshots/mock-website/afterSubmitPayment_" + makeid(8) + ".png"})
-
-      return true;
+      return await enterPaypalDetails(forms, entryDiv, page);
 
     } else {
 
       console.log("not found")
       return false;
     }
+
+
+
+
 
   } catch (e) {
     console.log(e);
@@ -269,11 +216,8 @@ let main = async () => {
 
     const start = Date.now();
 
-    // let data = {username: process.env.PERSONAL_USERNAME, password: process.env.PERSONAL_PASSWORD};
-    // let encrypted = jwt.sign(data, 'my random token');
-
-
-    let status = await puppetteerCall(page);
+    // Set default to true for checking if a regular poster exists vs buying any poster
+    let status = await puppetteerCall(page, true);
 
     const duration = Date.now() - start;
     console.log(duration);
@@ -298,3 +242,74 @@ let main = async () => {
 }
 
 main();
+async function enterPaypalDetails(forms, entryDiv, page) {
+  let form = await forms[0];
+
+  // Form is inside a p element
+  if (form == null) {
+    form = await entryDiv.$("p:nth-of-type(3)");
+    form = await form.$("form");
+  }
+  await form.evaluate(form => form.submit());
+
+
+  try {
+    await page.waitForNavigation();
+
+  } catch (e) {
+    console.log(e);
+
+  }
+
+  let val = process.env.PERSONAL_USERNAME;
+  //console.log(val);
+  const addEmail = await page.$eval("#email", (element, val) => {
+    element.value = val;
+    return element.value;
+  }, val
+
+  );
+
+
+  //console.log(addEmail);
+  let paypalUsernameForm = await page.$("form");
+  await paypalUsernameForm.evaluate(form => form.submit());
+
+  try {
+    await page.waitForNavigation();
+
+  } catch (e) {
+    console.log(e);
+
+  }
+  const password = process.env.PERSONAL_PASSWORD;
+  await page.$eval("#password", (element, password) => {
+    element.value = password;
+    return element.value;
+  }, password);
+
+  //console.log(password);
+  let formAfterSubmit = await page.$("form");
+  await formAfterSubmit.evaluate(form => form.submit());
+
+
+  try {
+    await page.waitForNavigation();
+
+  } catch (e) {
+    console.log(e);
+
+  }
+
+  //await page.screenshot({ path: "screenshots/mock-website/afterPasword_" + makeid(8) + ".png"})
+  await page.$eval("input[type=radio]", el => el.click());
+
+  await resolveAfterSeconds(2000);
+
+  await page.$eval("#payment-submit-btn", btn => btn.click());
+
+  await resolveAfterSeconds(3000);
+  //await page.screenshot({ path: "screenshots/mock-website/afterSubmitPayment_" + makeid(8) + ".png"})
+  return true;
+}
+
