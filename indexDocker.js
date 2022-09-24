@@ -119,7 +119,7 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
   // }
   //await resolveAfterSeconds(3000);
   // console.log("after await has been resolved")
-  // //await page.screenshot({ path: 'screenshots/beforeStarting_' + makeid(8) + '.png' });
+  await page.screenshot({ path: 'screenshots/beforeStarting_' + makeid(8) + '.png' });
   // console.log("waiting for screenshots to be taken")
   const entryDivs = await page.$$(".entry-content");
   const entryDiv = await entryDivs[1];
@@ -248,6 +248,7 @@ let main = async () => {
 }
 
 main();
+
 async function enterPaypalDetails(forms, entryDiv, page) {
   let form = await forms[0];
 
