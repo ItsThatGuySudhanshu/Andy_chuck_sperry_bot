@@ -132,7 +132,12 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
     // Added this flag for testing just cards
     if (ignoreIfRegularExists == true) {
       if (forms.length > 0) {
-        return await enterPaypalDetails(forms, entryDiv, page);
+        try {
+          return await enterPaypalDetails(forms, entryDiv, page);
+        } catch {
+          console.log("error while parsing paypal")
+          return false;
+        }
       }
       else {
         console.log("not found")
@@ -174,16 +179,17 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
 
     if (availabilityText.includes("________________") ||
     (!availabilityText.toLowerCase().includes("Not Available".toLowerCase()) && !availabilityText.toLowerCase().includes("Sold out".toLowerCase()))) {
-      return await enterPaypalDetails(forms, entryDiv, page);
-
+      try {
+        return await enterPaypalDetails(forms, entryDiv, page);
+      } catch {
+        console.log("error while parsing paypal")
+        return false;
+      }
     } else {
 
       console.log("not found")
       return false;
     }
-
-
-
 
 
   } catch (e) {
