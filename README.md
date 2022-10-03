@@ -18,3 +18,8 @@
 
 7. Run the "node index.js" command in the terminal
 8. The application will now run till you hit Control+C (or cmd+C on mac) in the terminal window
+
+
+## Testing purposes
+
+1. Build command : `docker build --tag andy-bot --build-arg CACHEBUST=$(date +%s) -f .\DockerfileTest.dockerfile .`
