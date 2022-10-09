@@ -1,9 +1,11 @@
 ## Instructions on running the application (Docker)
 
-1. Clone the github repository
+1. Clone the github repository (only first time)
 2. Create a .env file with the given credentials for username and password
-3. Open up terminal and go into the directory where the .env file is stored
-4. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST="8" .` . Change the "8" to a random number periodically to avoid caching issues.
+3. Open the Docker Desktop application and wait till the Docker engine is running
+4. Open up terminal and go into the directory where the .env file is stored
+5. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST="8" .` . Change the "8" to a random number periodically to avoid caching issues.
+6. Go to Images in Docker Desktop and hover over the image "andy-bot". Click run right next to this image.
 
 ## Instructions on running the application (Windows)
 
