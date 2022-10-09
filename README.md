@@ -2,7 +2,8 @@
 
 1. Clone the github repository
 2. Create a .env file with the given credentials for username and password
-3. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST="8" .`
+3. Open up terminal and go into the directory where the .env file is stored
+4. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST="8" .`
 
 ## Instructions on running the application (Windows)
 
