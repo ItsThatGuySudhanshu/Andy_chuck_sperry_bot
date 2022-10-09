@@ -3,7 +3,7 @@
 1. Clone the github repository
 2. Create a .env file with the given credentials for username and password
 3. Open up terminal and go into the directory where the .env file is stored
-4. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST="8" .`
+4. Run this command: `docker build --tag andy-bot --build-arg CACHEBUST="8" .` . Change the "8" to a random number periodically to avoid caching issues.
 
 ## Instructions on running the application (Windows)
 
