@@ -107,20 +107,10 @@ let choosePreference = async (filename = null, entryDiv, preference = "Regular")
 async function puppetteerCall(page, ignoreIfRegularExists = true) {
 
   console.log("after puppeteer opened a new page")
-  // TODO: FIX THIS URL
-  // let contentHtml = await fs.readFileSync(`${__dirname}/chuck-sperry-source-code.html`, 'utf8');
-  // await page.setContent(contentHtml)
+
 
   await page.goto(`https://chucksperry.net/blog/`);
-  // try {
-  //   await page.waitForNavigation();
-  // } catch (e) {
-  //   console.log(e)
-  // }
-  //await resolveAfterSeconds(3000);
-  // console.log("after await has been resolved")
-  //await page.screenshot({ path: 'screenshots/beforeStarting_' + makeid(8) + '.png' });
-  // console.log("waiting for screenshots to be taken")
+
   const entryDivs = await page.$$(".entry-content");
   const entryDiv = await entryDivs[1];
 
@@ -183,7 +173,8 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
       try {
         return await enterPaypalDetails(forms, entryDiv, page);
       } catch {
-        console.log("error while parsing paypal")
+        console.log("error while parsing paypal");
+
         return false;
       }
     } else {
