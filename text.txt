@@ -1,5 +1,8 @@
 6RT09659C4257210R: latest transaction id
 
+Things to keep in mind 10/9
+1. Shows up on the home page --> latest rock poster first and then shows up on the blog, according to Andy
+
 
 Tests run:
 1) Run test website with buy form intact: gets paid and transaction is created (200)

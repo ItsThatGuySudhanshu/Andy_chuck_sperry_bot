@@ -83,6 +83,11 @@ let findMatch = async (entryDiv, preference) => {
       return index;
     }
 
+    if (text.toLowerCase().includes("sold out") == true || text.toLowerCase().includes("sold out") == true) {
+      console.log("not available");
+      return -1;
+    }
+
     index++
   }
   console.log("outside loop")
@@ -117,24 +122,32 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
 
   try {
 
-    const forms = await entryDiv.$$("form");
+    let paragraphs = entryDiv.$$("p");
 
-    // Added this flag for testing just cards
-    if (ignoreIfRegularExists == true) {
-      if (forms.length > 0) {
+    for (let i = 0; i < paragraphs.length; i++) {
+      let paragraph = paragraphs[i];
+
+      let textUnparsed = await paragraph.getProperty("innerText")
+      let text = await textUnparsed.jsonValue();
+
+      let formInside = await paragraph.$("form");
+      if (formInside != null) {
         try {
-          return await enterPaypalDetails(forms, entryDiv, page);
-        } catch {
-          console.log("error while parsing paypal")
-          return false;
+          let triedForm = await enterPaypalDetails(formInside, entryDiv, page);
+          if (triedForm == true) {
+            return true;
+          }
+        } catch (error) {
+          // Continue
+          console.log("no form inside paragraph");
+
         }
       }
-      else {
-        console.log("in the ignore rule")
-        console.log("not found")
-        return false;
-      }
+
     }
+
+
+    const forms = await entryDiv.$$("form");
 
     let indexOfDescription = await choosePreference(null, entryDiv, "Regular");
 
@@ -161,12 +174,6 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
     let availabilityUnparsed = await availabilityHandle.getProperty("innerText");
     let availabilityText = await availabilityUnparsed.jsonValue();
 
-    // console.log(nextSiblingText);
-
-    // console.log(typeof nextSiblingText);
-
-
-
 
     if (availabilityText.includes("________________") ||
     (!availabilityText.toLowerCase().includes("Not Available".toLowerCase()) && !availabilityText.toLowerCase().includes("Sold out".toLowerCase()))) {
@@ -182,7 +189,6 @@ async function puppetteerCall(page, ignoreIfRegularExists = true) {
       console.log("not found")
       return false;
     }
-
 
   } catch (e) {
     console.log(e);
